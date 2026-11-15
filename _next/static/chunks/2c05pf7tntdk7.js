@@ -25,9 +25,9 @@ if(e==="/dice"&&method==="POST"){let stake=Number(body.bet)||0;if(stake<=0||stak
 if(e==="/dice"||e.startsWith("/dice?"))return{data:[],items:[],meta:{total:0,page:1,per_page:30}};
 if(/^\/dice\/[^/]+\/join$/.test(e))return{game:{id:e.split("/")[2],status:"finished"},winner_payout:0};
 if(/^\/dice\/[^/]+\/cancel$/.test(e))return{success:true};
-if(e==="/jackpot/current")return{data:{id:1,bets:[],total:0,bank:0}};
+if(e==="/jackpot/current"){let jr=JSON.parse(localStorage.getItem("lootsplay:demo-jackpot")||"null");if(!jr)jr={id:1,status:"waiting",start_at:null,duration:8000,min_bet:.01,max_bet:1000,bets:[],total_amount:0,total_tickets:0,bonus_prizes:[],winner:null,server_seed_hash:"DEMO-LOCAL-SEED"};return{data:jr}}
 if(e.startsWith("/jackpot/history"))return{data:[]};
-if(e==="/jackpot/betTon"&&method==="POST"){let stake=Number(body.amount)||0;if(stake<=0||stake>balance())throw new s("Недостаточно TON",400);saveBalance(balance()-stake);return{success:true}}
+if(e==="/jackpot/betTon"&&method==="POST"){let stake=Number(body.amount)||0;if(stake<=0||stake>balance())throw new s("Недостаточно TON",400);saveBalance(balance()-stake);let u=window.Telegram?.WebApp?.initDataUnsafe?.user||{},uid=u.id??"guest",chance=Math.max(.01,Math.min(99.99,stake/(stake+10)*100)),win={id:uid,username:u.username??"demo_player",first_name:u.first_name??"Игрок",photo_url:u.photo_url??""},bet={id:"p"+Date.now(),user_id:uid,user:win,amount:stake,ticket_start:1,ticket_end:Math.max(1,Math.ceil(stake*100)),win_chance:chance};let jr={id:Date.now(),status:"finished",start_at:now,duration:8000,min_bet:.01,max_bet:1000,bets:[bet],total_amount:stake,total_tickets:bet.ticket_end,bonus_prizes:[],winner:{user:win,win_chance:chance},server_seed_hash:"DEMO-LOCAL-SEED"};localStorage.setItem("lootsplay:demo-jackpot",JSON.stringify(jr));return{success:true}}
 if(e==="/jackpot/bet"&&method==="POST")return{success:true};
 if(e==="/inventory")return{data:[],items:[]};
 if(e==="/quests")return{data:[]};
