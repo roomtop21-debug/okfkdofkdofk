@@ -14,7 +14,7 @@ html.tg-only-block #tg-only-screen{display:flex!important;position:fixed;inset:0
 </style><script>
 (function(){
  var tg=window.Telegram&&window.Telegram.WebApp;
- var inTelegram=!!(tg&&(tg.initData||(tg.platform&&tg.platform!=="unknown")));
+ var inTelegram=!!(tg&&typeof tg.initData==="string"&&tg.initData.length>0);
  if(!inTelegram){
   document.documentElement.classList.add("tg-only-block");
   document.addEventListener("DOMContentLoaded",function(){
